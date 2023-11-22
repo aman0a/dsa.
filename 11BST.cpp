@@ -1,210 +1,113 @@
-#include <iostream>
-#include <iomanip>
+#include<iostream>
+#include<sstream>
 using namespace std;
-struct tnode
-{
+
+struct Node {
     int data;
-    tnode *left = NULL, *right = NULL;
-};
-class tree
-{
-public:
-    tnode *root = NULL;
-    void create();
-    void search();
-    void display_ascend();
-    void inorder(tnode *q);
-
-    tnode *deletenode(tnode *root, int key)
-    {
-        tnode *temp;
-        if (root == NULL)
-        {
-            cout << "NO key exists" << endl;
-            return NULL;
-        }
-        else if (key < root->data)
-        {
-            root->left = deletenode(root->left, key);
-        }
-        else if (root->data < key)
-        {
-            root->right = deletenode(root->right, key);
-        }
-        else
-        {
-            if (root->left == NULL && root->right == NULL)
-            {
-                temp = root;
-                root = NULL;
-                delete temp;
-            }
-            else if (root->right == NULL)
-            {
-                temp = root;
-                root = root->left;
-                temp->left = NULL;
-                delete temp;
-            }
-            else if (root->left == NULL)
-            {
-                temp = root;
-                root = root->right;
-                temp->left = NULL;
-                delete temp;
-            }
-            else
-            {
-                temp = root;
-                temp = temp->right;
-                while (temp->left != NULL)
-                {
-                    temp = temp->left;
-                }
-                root->data = temp->data;
-                root->right = deletenode(root->right, temp->data);
-            }
-            return root;
-        }
-    }
+    Node* left;
+    Node* right;
 };
 
-void tree::create()
-{
-    tnode *nn = new tnode;
-    tnode *cn, *parent;
-    cn = root;
-    cout << "enter data in tree:" << endl;
-    cin >> nn->data;
-    if (cn == NULL)
-    {
-        root = nn;
-    }
-    else
-    {
-        while (cn != NULL)
-        {
-            parent = cn;
-            if (cn->data > nn->data)
-            {
-                cn = cn->left;
-            }
-            else
-            {
-                cn = cn->right;
-            }
-        }
-        if (parent->data > nn->data)
-        {
-            parent->left = nn;
-        }
-        else
-        {
-            parent->right = nn;
-        }
-    }
+Node* GetNewNode(int data) {
+    Node* newNode = new Node();
+    newNode->data = data;
+    newNode->left = newNode->right = NULL;
+    return newNode;
 }
-void tree::display_ascend()
-{
-    tnode *cn = root;
-    if (cn == NULL)
-    {
-        cout << "binary tree is not in existance" << endl;
+
+Node* Insert(Node* root, int data) {
+    if(root == NULL) {
+        root = GetNewNode(data);
+    } else if(data <= root->data) {
+        root->left = Insert(root->left, data);
+    } else {
+        root->right = Insert(root->right, data);
     }
-    else
-    {
-        inorder(cn);
-    }
-    cout << endl;
+    return root;
 }
-void tree::inorder(tnode *root)
-{
-    tnode *cn = root;
-    if (cn != NULL)
-    {
-        inorder(cn->left);
-        cout << cn->data << " ";
-        inorder(cn->right);
-    }
-}
-void tree::search()
-{
-    tnode *cn = root;
-    int m;
-    cout << "enter data to search:" << endl;
-    cin >> m;
-    while (cn != NULL)
-    {
-        if (cn->data == m)
-        {
-            cout << "record found" << endl;
-            break;
-        }
-        else if (cn->left != NULL || cn->right != NULL)
-        {
-            if (cn->data > m)
-            {
-                cn = cn->left;
-            }
-            else
-            {
-                cn = cn->right;
-            }
-        }
-        else
-        {
-            cn = NULL;
-        }
-    }
-    if (cn == NULL)
-    {
-        cout << "record not found" << endl;
+
+bool Search(Node* root, int data) {
+    if(root == NULL) {
+        return false;
+    } else if(root->data == data) {
+        return true;
+    } else if(data <= root->data) {
+        return Search(root->left, data);
+    } else {
+        return Search(root->right, data);
     }
 }
 
-int main()
-{
-    tree t;
-    int choice, key, ch;
-    while (1)
-    {
-        cout << endl
-             << "menu" << endl
-             << "1)insert" << endl
-             << "2)search" << endl
-             << "3)display" << endl
-             << "4)delete node" << endl
-             << "5)exit" << endl;
+void Inorder(Node *root) {
+    if(root == NULL) return;
+
+    Inorder(root->left);
+    cout << root->data << " ";
+    Inorder(root->right);
+}
+
+Node* FindMin(Node* root) {
+    while(root->left != NULL) root = root->left;
+    return root;
+}
+
+Node* Delete(Node* root, int data) {
+    if(root == NULL) return root;
+    else if(data < root->data) root->left = Delete(root->left, data);
+    else if(data > root->data) root->right = Delete(root->right, data);
+    else {
+        if(root->left == NULL && root->right == NULL) {
+            delete root;
+            root = NULL;
+        } else if(root->left == NULL) {
+            Node* temp = root;
+            root = root->right;
+            delete temp;
+        } else if(root->right == NULL) {
+            Node* temp = root;
+            root = root->left;
+            delete temp;
+        } else {
+            Node* temp = FindMin(root->right);
+            root->data = temp->data;
+            root->right = Delete(root->right, temp->data);
+        }
+    }
+    return root;
+}
+
+int main() {
+    Node* root = NULL;
+    int choice;
+    do {
+        cout << "1. Insert\n2. Delete\n3. Search\n4. Print Inorder\n5. Exit\nEnter your choice: ";
         cin >> choice;
-        cout << endl;
-        switch (choice)
-        {
-        case 1:
-            do
-            {
-                t.create();
-                cout << "want to add more:1)yes" << endl;
-                cin >> ch;
-            } while (ch == 1);
-            break;
-        case 2:
-            t.search();
-            break;
-        case 3:
-            t.display_ascend();
-            break;
-        case 4:
-            cout << "enter the key to delete:" << endl;
-            cin >> key;
-            t.deletenode(t.root, key);
-            break;
-        case 5:
-            return 0;
-            break;
-        default:
-            cout << "wrong choice" << endl;
-            break;
+        if(choice == 1) {
+            string line;
+            cout << "Enter the elements to be inserted (separated by space): ";
+            cin.ignore();
+            getline(cin, line);
+            stringstream ss(line);
+            int x;
+            while(ss >> x) {
+                root = Insert(root, x);
+            }
+        } else if(choice == 2) {
+            int x;
+            cout << "Enter the element to be deleted: ";
+            cin >> x;
+            root = Delete(root, x);
+        } else if(choice == 3) {
+            int x;
+            cout << "Enter the element to be searched: ";
+            cin >> x;
+            if(Search(root, x) == true) cout << "Found\n";
+            else cout << "Not Found\n";
+        } else if(choice == 4) {
+            Inorder(root);
+            cout << "\n";
         }
-    }
+    } while(choice != 5);
+
     return 0;
 }
