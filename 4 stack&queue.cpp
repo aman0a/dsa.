@@ -1,105 +1,85 @@
 #include<iostream>
 using namespace std;
 
-struct Node {
-    int data;
-    Node* next;
-};
+#define SIZE 10
 
 class Stack {
     private:
-        Node* top;
+        int top;
+        int arr[SIZE];
     public:
-        Stack() { top = NULL; }
+        Stack() { top = -1; }
         void push(int value);
         void pop();
         void display();
 };
 
 void Stack::push(int value) {
-    Node* newNode = new Node;
-    if (!newNode) {
-        cout << "Heap overflow";
-        exit(1);
+    if (top >= SIZE-1) {
+        cout << "Stack Overflow\n";
+        return;
     }
-    newNode->data = value;
-    newNode->next = top;
-    top = newNode;
+    arr[++top] = value;
 }
 
 void Stack::pop() {
-    if (top == NULL) {
-        cout << "Underflow \n";
+    if (top < 0) {
+        cout << "Stack Underflow \n";
         return;
     }
-    Node* temp = top;
-    top = top->next;
-    temp->next = NULL;
-    delete temp;
+    top--;
 }
 
 void Stack::display() {
-    Node* temp;
-    if (top == NULL) {
+    if (top < 0) {
         cout << "Stack is empty\n";
         return;
     }
-    temp = top;
-    while (temp != NULL) {
-        cout << temp->data << "-> ";
-        temp = temp->next;
+    for(int i = top; i >= 0; i--) {
+        cout << arr[i] << " ";
     }
+    cout << "\n";
 }
 
 class Queue {
     private:
-        Node *front, *rear;
+        int front, rear;
+        int arr[SIZE];
     public:
-        Queue() { front = rear = NULL; }
+        Queue() { front = -1; rear = -1; }
         void enqueue(int value);
         void dequeue();
         void display();
 };
 
 void Queue::enqueue(int value) {
-    Node* newNode = new Node;
-    if (!newNode) {
-        cout << "Heap overflow";
-        exit(1);
-    }
-    newNode->data = value;
-    newNode->next = NULL;
-    if (rear == NULL) {
-        front = rear = newNode;
+    if (rear >= SIZE-1) {
+        cout << "Queue Overflow\n";
         return;
     }
-    rear->next = newNode;
-    rear = newNode;
+    if (front == -1) {
+        front = 0;
+    }
+    arr[++rear] = value;
 }
 
 void Queue::dequeue() {
-    if (front == NULL) {
-        cout << "Underflow \n";
+    if (front > rear || front == -1) {
+        cout << "Queue Underflow \n";
         return;
     }
-    Node* temp = front;
-    front = front->next;
-    if (front == NULL) {
-        rear = NULL;
-    }
-    delete temp;
+    front++;
 }
 
 void Queue::display() {
-    Node* temp = front;
-    if ((front == NULL) && (rear == NULL)) {
+    if (front > rear || front == -1) {
         cout << "Queue is empty\n";
         return;
     }
-    while (temp != NULL) {
-        cout << temp->data << "-> ";
-        temp = temp->next;
+    for(int i = front; i <= rear; i++) {
+        cout << arr[i] << " ";
     }
+    cout << "\n";
 }
 
 int main() {
