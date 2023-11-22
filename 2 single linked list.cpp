@@ -1,322 +1,90 @@
-#include <iostream>
-#include <iomanip>
+#include<iostream>
 using namespace std;
 
-struct node
-{
-    int data;
-    node *next;
-};
-class sll
-{
+class Node {
 public:
-    node *header = NULL;
-    void insert();
-    void insertbeg();
-    void insertend();
-    void insertposition();
-    void remove();
-    void deletebeg();
-    void deleteend();
-    void deleteposition();
-    void print();
-    void search();
+    int data;
+    Node* next;
 };
 
-void sll::insert()
-{
-    int choice;
-    cout << "enter choice" << endl
-         << "1)begining" << endl
-         << "2)end" << endl
-         << "3)position" << endl;
-    cin >> choice;
-    switch (choice)
-    {
-    case 1:
-        insertbeg();
-        break;
-    case 2:
-        insertend();
-        break;
-    case 3:
-        insertposition();
-        break;
-    default:
-        cout << "wrong choice!!" << endl;
-    }
-}
-void sll::insertbeg()
-{
-    node *nn;
-    nn = new node;
-    cout << "enter the data part of node:" << endl;
-    cin >> nn->data;
-    nn->next = header;
-    header = nn;
+void insert(Node** head, int new_data) {
+    Node* new_node = new Node();
+    new_node->data = new_data;
+    new_node->next = (*head);
+    (*head) = new_node;
 }
 
-void sll::insertend()
-{
-    node *nn;
-    nn = new node;
-    cout << "enter the data part of node:" << endl;
-    cin >> nn->data;
-    nn->next = NULL;
-    if (header == NULL)
-    {
-        header = nn;
-    }
-    else
-    {
-        node *cn;
-        cn = header;
-        while (cn->next != NULL)
-        {
-            cn = cn->next;
-        }
-        cn->next = nn;
-    }
-}
-
-void sll::insertposition()
-{
-    node *cn;
-    cn = header;
-    int n;
-    cout << "enter the position:" << endl;
-    cin >> n;
-    if (n == 1)
-    {
-        insertbeg();
-    }
-    else if (header != NULL)
-    {
-
-        int count = 1;
-        while (cn->next != NULL)
-        {
-
-            count++;
-            cn = cn->next;
-        }
-
-        if (n > count)
-        {
-            cout << "sorry the position is invalid,we will put your record in last in the list:" << endl;
-            cout << "the limit is  only upto :" << count << endl;
-            insertend();
-        }
-        else
-        {
-            node *nn;
-            nn = new node;
-            cn = header;
-            for (int i = 0; i <= n - 3; i++)
-            {
-                cn = cn->next;
-            }
-            cout << "enter the data part of node:" << endl;
-            cin >> nn->data;
-            nn->next = cn->next;
-            cn->next = nn;
-        }
-    }
-    else
-    {
-        cout << "first enter the first node to access other positions:" << endl;
-    }
-}
-void sll::remove()
-{
-    int choice;
-    cout << "enter choice" << endl
-         << "1)begining" << endl
-         << "2)end" << endl
-         << "3)position" << endl;
-    cin >> choice;
-    switch (choice)
-    {
-    case 1:
-        deletebeg();
-        break;
-    case 2:
-        deleteend();
-        break;
-    case 3:
-        deleteposition();
-        break;
-    default:
-        cout << "wrong choice!!" << endl;
-    }
-}
-void sll::deletebeg()
-{
-    node *nn;
-    nn = new node;
-    nn = header;
-    header = nn->next;
-    delete nn;
-    cout << "deleted succesfully!!" << endl;
-}
-
-void sll::deleteend()
-{
-    node *cn;
-    cn = header;
-    int count = 1;
-    while (cn->next != NULL)
-    {
-
-        count++;
-        cn = cn->next;
-    }
-    node *nn;
-    nn = header;
-    if (count > 1)
-    {
-        while (nn->next->next != NULL)
-        {
-            nn = nn->next;
-        }
-        delete nn->next;
-        nn->next = NULL;
-        cout << "deleted succesfully!!" << endl;
-    }
-    else
-        deletebeg();
-        
-}
-
-void sll::deleteposition()
-{
-    node *nn;
-    nn=header;
-    int count=1,m;
-    while(nn->next!=NULL)
-    {
-        count++;
-        nn=nn->next;
-    }
-    cout<<"only positions upto "<<count<<" are available:"<<endl; 
-    cout<<"enter the node position to be deleted:"<<endl;
-    cin>>m;
-    if(m>count)
-    {
-        cout<<"you crossed the position limit,deletion cannot be done:"<<endl;
-    }
-    else if(m==1)
-    {
-        deletebeg();
-    }
-    else if(m<1)
-    {
-        cout<<"no position in exictance,deletion cannot be done:"<<endl;
-
-    }
-    else if(m==count)
-    {
-        deleteend();
-    }
-    else
-    {
-        nn=header;
-        for(int i=0;i<m-2;i++)
-        {
-            nn=nn->next->next;
-        }
-        node *temp=nn->next;
-        nn->next=nn->next->next;
+void deleteNode(Node **head, int key) {
+    Node* temp = *head, *prev;
+    if (temp != NULL && temp->data == key) {
+        *head = temp->next;
         delete temp;
-        cout<<"deleted succesfully!!"<<endl;
+        return;
+    }
+    while (temp != NULL && temp->data != key) {
+        prev = temp;
+        temp = temp->next;
+    }
+    if (temp == NULL) return;
+    prev->next = temp->next;
+    delete temp;
+}
+
+void printList(Node *node) {
+    while (node != NULL) {
+        cout << node->data << " ";
+        node = node->next;
     }
 }
 
-void sll::print()
-{
-    if (header == NULL)
-    {
-        cout << "no link list in exictance:" << endl;
+bool search(Node* head, int x) {
+    Node* current = head;
+    while (current != NULL) {
+        if (current->data == x)
+            return true;
+        current = current->next;
     }
-    else
-    {
-        node *cn;
-        cn = header;
-        cout << "your nodee structure is:" << endl;
-        while (cn != NULL)
-        {
-            cout << cn->data << "   ";
-            cn = cn->next;
-        }
-        cout << endl;
-    }
+    return false;
 }
 
-void sll::search()
-{
-    int p;
-    cout<<"enter the data part of node to be searched:"<<endl;
-            cin>>p;
-    node *nn;
-    nn=header;
-    int count=1,m=0;
-    while(nn->next!=NULL)
-    {
-        count++;
-        nn=nn->next;
+void reverse(Node** head) {
+    Node* prev = NULL;
+    Node* current = *head;
+    Node* next = NULL;
+    while (current != NULL) {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
     }
-    nn=header;
-    while(nn->data!=p)
-    {
-        m++;
-        nn=nn->next;
-        if(m==count)
-        {
-            cout<<"no data found:"<<endl;
-            break;
-        }
-    }
-    if(m<count&&m>=0)
-    {
-        cout<<"in the list of "<<count<<" the node entered is present at "<<m+1<<endl;
-    }
+    *head = prev;
 }
 
-int main()
-{
-    sll obj;
-    int choice;
-    while (1)
-    {
-        cout << "enter choice" << endl
-             << "1)insert" << endl
-             << "2)delete" << endl
-             << "3)print" << endl
-             << "4)search" << endl
-             << "5)exit" <<endl;
+int main() {
+    Node* head = NULL;
+    int choice, data;
+    while (1) {
+        cout << "\n1.Insert\n2.Delete\n3.Display\n4.Search\n5.Reverse\n6.Exit\n";
         cin >> choice;
-
-        switch (choice)
-        {
-        case 1:
-            obj.insert();
+        switch (choice) {
+        case 1: cout << "Enter the element: ";
+            cin >> data;
+            insert(&head, data);
             break;
-        case 2:
-            obj.remove();
+        case 2: cout << "Enter the element to be deleted: ";
+            cin >> data;
+            deleteNode(&head, data);
             break;
-        case 3:
-            obj.print();
+        case 3: printList(head);
             break;
-        case 4:
-            obj.search();
+        case 4: cout << "Enter the element to be searched: ";
+            cin >> data;
+            search(head, data) ? cout << "Yes" : cout << "No";
             break;
-        case 5:
-            cout<< "!!thank you !!"<<endl;
-            return 0;
+        case 5: reverse(&head);
             break;
-        default:
-            cout <<"wrong choice" << endl;
-            break;
+        case 6: exit(0);
+        default: cout << "Invalid choice!";
         }
     }
     return 0;
