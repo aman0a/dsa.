@@ -1,189 +1,135 @@
-#include <iostream>
+#include<iostream>
 using namespace std;
-struct node
-{
+
+struct Node {
     int data;
-    node *next;
+    Node* next;
 };
-class sll
-{
-public:
-    node *header = NULL;
-    void insertend();
-    void deleteend();
-    void deletebeg();
-    void print();
-    friend void stack(sll);
-    friend void queue(sll);
+
+class Stack {
+    private:
+        Node* top;
+    public:
+        Stack() { top = NULL; }
+        void push(int value);
+        void pop();
+        void display();
 };
-void sll::insertend()
-{
-    node *nn;
-    nn = new node;
-    cout << "enter data:" << endl;
-    cin >> nn->data;
-    nn->next = NULL;
-    if (header == NULL)
-    {
-        header = nn;
+
+void Stack::push(int value) {
+    Node* newNode = new Node;
+    if (!newNode) {
+        cout << "Heap overflow";
+        exit(1);
     }
-    else
-    {
-        node *cn;
-        cn = header;
-        while (cn->next != NULL)
-        {
-            cn = cn->next;
-        }
-        cn->next = nn;
+    newNode->data = value;
+    newNode->next = top;
+    top = newNode;
+}
+
+void Stack::pop() {
+    if (top == NULL) {
+        cout << "Underflow \n";
+        return;
+    }
+    Node* temp = top;
+    top = top->next;
+    temp->next = NULL;
+    delete temp;
+}
+
+void Stack::display() {
+    Node* temp;
+    if (top == NULL) {
+        cout << "Stack is empty\n";
+        return;
+    }
+    temp = top;
+    while (temp != NULL) {
+        cout << temp->data << "-> ";
+        temp = temp->next;
     }
 }
 
-void sll::deletebeg()
-{
-    node *cn;
-    cn = header;
-    header = cn->next;
-    delete cn;
-    cout << "deleted succesfully" << endl;
+class Queue {
+    private:
+        Node *front, *rear;
+    public:
+        Queue() { front = rear = NULL; }
+        void enqueue(int value);
+        void dequeue();
+        void display();
+};
+
+void Queue::enqueue(int value) {
+    Node* newNode = new Node;
+    if (!newNode) {
+        cout << "Heap overflow";
+        exit(1);
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+    if (rear == NULL) {
+        front = rear = newNode;
+        return;
+    }
+    rear->next = newNode;
+    rear = newNode;
 }
 
-void sll::deleteend()
-{
-    node *cn, *nn;
-    cn = header;
-    int count = 1;
-    while (cn->next != NULL)
-    {
-        count++;
-        nn = cn;
-        cn = cn->next;
+void Queue::dequeue() {
+    if (front == NULL) {
+        cout << "Underflow \n";
+        return;
     }
-    if (count > 1)
-    {
-        delete cn;
-        nn->next = NULL;
-        cout << "deleted succesfully" << endl;
+    Node* temp = front;
+    front = front->next;
+    if (front == NULL) {
+        rear = NULL;
     }
-    else
-    {
-        delete cn;
-        delete nn;
-        cout << "deleted succesfully" << endl;
-    }
+    delete temp;
 }
 
-void sll::print()
-{
-    node *cn;
-    cn = header;
-    if (header == NULL)
-    {
-        cout << "no element present" << endl;
+void Queue::display() {
+    Node* temp = front;
+    if ((front == NULL) && (rear == NULL)) {
+        cout << "Queue is empty\n";
+        return;
     }
-    else
-    {
-        cout << "the elements are" << endl;
-        do
-        {
-            cout << cn->data << endl;
-            cn = cn->next;
-        } while (cn != NULL);
-    }
-}
-void stack(sll b)
-{
-    while (1)
-    {
-        int d;
-        cout << "1)push"
-             << "2)pop"
-             << "3)print"
-             << "4)exit" << endl;
-        cin >> d;
-
-        switch (d)
-        {
-        case 1:
-            b.insertend();
-            break;
-        case 2:
-            b.deleteend();
-            break;
-        case 3:
-            b.print();
-            break;
-        case 4:
-            return;
-            break;
-        default:
-            cout << "wrong choice" << endl;
-            break;
-        }
-    }
-}
-void queue(sll c)
-{
-    while (1)
-    {
-        int d;
-        cout << "1)insert"
-             << "2)remove"
-             << "3)print"
-             << "4)exit" << endl;
-
-        cin >> d;
-
-        switch (d)
-        {
-        case 1:
-            c.insertend();
-            break;
-        case 2:
-            c.deletebeg();
-            break;
-        case 3:
-            c.print();
-            break;
-        case 4:
-            return;
-            break;
-        default:
-            cout << "wrong choice" << endl;
-            break;
-        }
+    while (temp != NULL) {
+        cout << temp->data << "-> ";
+        temp = temp->next;
     }
 }
 
-int main()
-{
-    int choice, q = 1;
-    sll b, c;
-    while (1)
-    {
-        cout << "Menu" << endl;
-        cout << "1)stack " << endl
-             << "2)queue" << endl
-             << "3)end" << endl;
-        cout << "enter your choice:" << endl;
+int main() {
+    Stack s;
+    Queue q;
+    int choice, value;
+    do {
+        cout << "\n1. Push to Stack\n2. Pop from Stack\n3. Display Stack\n4. Enqueue to Queue\n5. Dequeue from Queue\n6. Display Queue\n7. Exit\n";
+        cout << "Enter your choice: ";
         cin >> choice;
-
-        if (choice == 1)
-        {
-            stack(b);
+        switch(choice) {
+            case 1: cout << "Enter the value to be pushed: ";
+                    cin >> value;
+                    s.push(value);
+                    break;
+            case 2: s.pop();
+                    break;
+            case 3: s.display();
+                    break;
+            case 4: cout << "Enter the value to be enqueued: ";
+                    cin >> value;
+                    q.enqueue(value);
+                    break;
+            case 5: q.dequeue();
+                    break;
+            case 6: q.display();
+                    break;
+            case 7: break;
+            default: cout << "Invalid choice\n";
         }
-        else if (choice == 2)
-        {
-            queue(c);
-        }
-        else if (choice == 3)
-        {
-            return 0;
-        }
-        else
-        {
-            cout << "wrong input" << endl;
-        }
-    }
+    } while(choice != 7);
     return 0;
 }
