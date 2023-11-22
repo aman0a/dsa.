@@ -1,0 +1,81 @@
+#include<iostream>
+using namespace std;
+
+struct Node {
+    int data;
+    Node* next;
+};
+
+class Queue {
+    private:
+        Node *front, *rear;
+    public:
+        Queue() { front = rear = NULL; }
+        void enqueue(int value);
+        void dequeue();
+        void display();
+};
+
+void Queue::enqueue(int value) {
+    Node* newNode = new Node;
+    if (!newNode) {
+        cout << "Heap overflow";
+        exit(1);
+    }
+    newNode->data = value;
+    newNode->next = NULL;
+    if (rear == NULL) {
+        front = rear = newNode;
+        return;
+    }
+    rear->next = newNode;
+    rear = newNode;
+}
+
+void Queue::dequeue() {
+    if (front == NULL) {
+        cout << "Underflow \n";
+        return;
+    }
+    Node* temp = front;
+    front = front->next;
+    if (front == NULL) {
+        rear = NULL;
+    }
+    delete temp;
+}
+
+void Queue::display() {
+    Node* temp = front;
+    if ((front == NULL) && (rear == NULL)) {
+        cout << "Queue is empty\n";
+        return;
+    }
+    while (temp != NULL) {
+        cout << temp->data << "-> ";
+        temp = temp->next;
+    }
+}
+
+int main() {
+    Queue q;
+    int choice, value;
+    do {
+        cout << "\n1. Enqueue\n2. Dequeue\n3. Display\n4. Exit\n";
+        cout << "Enter your choice: ";
+        cin >> choice;
+        switch(choice) {
+            case 1: cout << "Enter the value to be enqueued: ";
+                    cin >> value;
+                    q.enqueue(value);
+                    break;
+            case 2: q.dequeue();
+                    break;
+            case 3: q.display();
+                    break;
+            case 4: break;
+            default: cout << "Invalid choice\n";
+        }
+    } while(choice != 4);
+    return 0;
+}
